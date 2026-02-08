@@ -1,0 +1,133 @@
+╔════════════════════════════════════════════════════════════╗
+║         Algo Trading Platform - Usage Summary              ║
+╚════════════════════════════════════════════════════════════╝
+
+📦 SETUP (One-Time)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ./setup.sh
+
+  What it does:
+  • Installs dependencies
+  • Prompts for Zerodha API credentials
+  • Configures strategy parameters
+  • Tests connection
+  • Creates .setup_complete flag
+
+🚀 START APPLICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ./start.sh
+
+  Interactive menu with 9 options:
+  1. Run Stock Screener
+  2. Backtest a Stock
+  3. Start Paper Trading
+  4. Launch Dashboard
+  5. Live Trading (⚠️ real money)
+  6. Run Examples
+  7. Reconfigure
+  8. View Documentation
+  9. Exit
+
+📖 DOCUMENTATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  • QUICKSTART.md      → 5-minute getting started
+  • README.md          → Full user guide
+  • PROJECT_SUMMARY.md → What was built & architecture
+  • SETUP_GUIDE.md     → Zerodha API setup details
+  • CHECKLIST.md       → Week-by-week launch plan
+  • DEMO.md            → What you'll see when running scripts
+
+🎯 RECOMMENDED PATH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Day 1:
+    1. ./setup.sh
+    2. ./start.sh → Option 6 (Run Examples)
+    3. ./start.sh → Option 1 (Screener)
+    4. ./start.sh → Option 4 (Dashboard)
+  
+  Week 1:
+    • Backtest multiple stocks (Option 2)
+    • Understand win rates & P&L
+    • Adjust strategy in config.py
+  
+  Week 2-3:
+    • Paper trade daily (Option 3, market hours)
+    • Track results
+    • Achieve consistent profitability
+  
+  Week 4+:
+    • Consider small live trades (Option 5)
+    • Start with ₹10-20k capital
+    • Scale gradually if profitable
+
+⚠️  SAFETY RULES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✓ ALWAYS start with paper trading
+  ✓ Test for 2+ weeks before going live
+  ✓ Never risk more than you can afford to lose
+  ✓ Short selling = unlimited loss potential
+  ✓ Use stop losses (already implemented)
+  ✓ Start with small capital when going live
+
+💡 QUICK COMMANDS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Setup
+  ./setup.sh
+
+  # Launch
+  ./start.sh
+
+  # Reconfigure settings
+  ./start.sh → 7
+
+  # View this summary
+  cat USAGE_SUMMARY.txt
+
+  # Get help
+  cat README.md
+  cat QUICKSTART.md
+
+🔧 CONFIGURATION FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  .env           → Your API credentials (never commit!)
+  config.py      → Strategy parameters
+  .setup_complete → Setup status flag
+
+📊 OUTPUT FILES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  data/screener_results_*.csv → Screener outputs
+  data/backtest_*.csv         → Backtest results
+  logs/trading.log            → All activity logs
+
+🆘 TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  "Setup not completed"
+  → Run ./setup.sh first
+
+  "Token is invalid"
+  → Access tokens expire daily
+  → Run ./start.sh → Option 7 to update
+
+  "Connection failed"
+  → Check internet connection
+  → Verify API credentials
+  → Check Zerodha API status
+
+  "No module named X"
+  → Activate venv: source venv/bin/activate
+  → Reinstall: pip install -r requirements.txt
+
+  Need detailed help?
+  → Check logs/trading.log
+  → Read SETUP_GUIDE.md
+  → Review DEMO.md
+
+🌐 RESOURCES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Zerodha API: https://kite.trade/docs/
+  Developers: https://developers.kite.trade/
+  Support: https://support.zerodha.com/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Ready to start? Run: ./setup.sh
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

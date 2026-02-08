@@ -1,0 +1,14 @@
+kiteconnect
+pandas
+numpy
+requests
+beautifulsoup4
+transformers
+torch
+ta-lib
+python-dotenv
+streamlit
+plotly
+sqlalchemy
+websocket-client
+schedule
