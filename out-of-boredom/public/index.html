@@ -21,12 +21,23 @@
             box-sizing: border-box;
         }
 
+        html {
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+
         body {
             background: var(--bg);
             color: var(--accent);
             font-family: 'Red Hat Display', sans-serif;
             overflow: hidden;
             cursor: crosshair;
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            position: fixed;
         }
 
         /* Grain texture overlay */
@@ -75,8 +86,11 @@
         .slider-wrapper {
             width: 100%;
             height: 100vh;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
             overflow: hidden;
+            touch-action: pan-x;
         }
 
         .slider-container {
@@ -84,10 +98,12 @@
             width: 200%;
             height: 100%;
             transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform;
         }
 
         .slide {
-            min-width: 100%;
+            min-width: 100vw;
+            width: 100vw;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -95,6 +111,7 @@
             align-items: center;
             position: relative;
             padding: 2rem;
+            box-sizing: border-box;
         }
 
         .hero {
@@ -280,11 +297,36 @@
         @media (max-width: 768px) {
             .title {
                 transform: skewY(-1deg);
+                font-size: clamp(2.5rem, 12vw, 8rem);
+            }
+
+            .subtitle {
+                font-size: clamp(0.8rem, 2.5vw, 1.5rem);
             }
             
             footer {
-                font-size: 0.7rem;
-                padding: 1.5rem 1rem;
+                font-size: 0.65rem;
+                padding: 1rem;
+                padding-bottom: 6rem;
+            }
+
+            .slide {
+                padding: 1rem;
+            }
+
+            .slide-nav {
+                bottom: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .title {
+                font-size: clamp(2rem, 10vw, 6rem);
+            }
+
+            .subtitle {
+                font-size: clamp(0.7rem, 2vw, 1.2rem);
+                margin-top: 1rem;
             }
         }
     </style>
@@ -333,8 +375,6 @@
         const slider = document.getElementById('slider');
         const dots = document.querySelectorAll('.slide-dot');
         let currentSlide = 0;
-        let startX = 0;
-        let isDragging = false;
 
         function goToSlide(index) {
             currentSlide = index;
@@ -346,57 +386,65 @@
         }
 
         // Touch events
-        slider.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            isDragging = true;
-        });
+        let touchStartX = 0;
+        let touchEndX = 0;
 
-        slider.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            
-            const currentX = e.touches[0].clientX;
-            const diff = startX - currentX;
-            
-            if (Math.abs(diff) > 50) {
+        slider.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        slider.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
                 if (diff > 0 && currentSlide < 1) {
                     goToSlide(currentSlide + 1);
-                    isDragging = false;
                 } else if (diff < 0 && currentSlide > 0) {
                     goToSlide(currentSlide - 1);
-                    isDragging = false;
                 }
             }
-        });
-
-        slider.addEventListener('touchend', () => {
-            isDragging = false;
-        });
+        }
 
         // Mouse events for desktop
+        let mouseStartX = 0;
+        let mouseIsDragging = false;
+
         slider.addEventListener('mousedown', (e) => {
-            startX = e.clientX;
-            isDragging = true;
+            mouseStartX = e.clientX;
+            mouseIsDragging = true;
+            e.preventDefault();
         });
 
         slider.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
+            if (!mouseIsDragging) return;
+            e.preventDefault();
+        });
+
+        slider.addEventListener('mouseup', (e) => {
+            if (!mouseIsDragging) return;
             
-            const currentX = e.clientX;
-            const diff = startX - currentX;
+            const mouseEndX = e.clientX;
+            const diff = mouseStartX - mouseEndX;
             
             if (Math.abs(diff) > 100) {
                 if (diff > 0 && currentSlide < 1) {
                     goToSlide(currentSlide + 1);
-                    isDragging = false;
                 } else if (diff < 0 && currentSlide > 0) {
                     goToSlide(currentSlide - 1);
-                    isDragging = false;
                 }
             }
+            
+            mouseIsDragging = false;
         });
 
-        slider.addEventListener('mouseup', () => {
-            isDragging = false;
+        slider.addEventListener('mouseleave', () => {
+            mouseIsDragging = false;
         });
 
         // Dot navigation
