@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Out Of Boredom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@700&family=Red+Hat+Display:wght@400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --accent: #00ff88;
+            --accent-glow: #00ff88cc;
+            --text-dim: #666;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--accent);
+            font-family: 'Red Hat Display', sans-serif;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* Grain texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.15) 3px),
+                repeating-linear-gradient(90deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.15) 3px);
+            pointer-events: none;
+            opacity: 0.03;
+            z-index: 999;
+            animation: grain 0.3s steps(6) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-2%, -2%); }
+            20% { transform: translate(2%, 0%); }
+            30% { transform: translate(-1%, 1%); }
+            40% { transform: translate(1%, -1%); }
+            50% { transform: translate(-2%, 2%); }
+            60% { transform: translate(2%, 1%); }
+            70% { transform: translate(-1%, -2%); }
+            80% { transform: translate(0%, 2%); }
+            90% { transform: translate(1%, -1%); }
+        }
+
+        /* Vignette */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%);
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .hero {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(3.5rem, 15vw, 12rem);
+            line-height: 0.85;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            transform: skewY(-2deg);
+        }
+
+        .title span {
+            display: block;
+            text-shadow: 
+                0 0 10px var(--accent-glow),
+                0 0 20px var(--accent-glow),
+                0 0 40px var(--accent-glow),
+                0 0 80px rgba(0, 255, 136, 0.4);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px var(--accent-glow),
+                    0 0 20px var(--accent-glow),
+                    0 0 40px var(--accent-glow),
+                    0 0 80px rgba(0, 255, 136, 0.4);
+            }
+            50% {
+                text-shadow: 
+                    0 0 20px var(--accent-glow),
+                    0 0 40px var(--accent-glow),
+                    0 0 60px var(--accent-glow),
+                    0 0 100px rgba(0, 255, 136, 0.6);
+            }
+        }
+
+        /* Neon flicker effect */
+        @keyframes neonFlicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 10px var(--accent-glow),
+                    0 0 20px var(--accent-glow),
+                    0 0 40px var(--accent-glow),
+                    0 0 80px rgba(0, 255, 136, 0.4);
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                opacity: 0.4;
+            }
+            22% {
+                text-shadow: none;
+                opacity: 0.2;
+            }
+        }
+
+        .title span {
+            animation: neonFlicker 5s infinite;
+        }
+
+        .title span:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .title span:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(1rem, 3vw, 2rem);
+            margin-top: 2rem;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            opacity: 0.7;
+            text-transform: uppercase;
+            animation: fadeInUp 1.2s 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+        }
+
+        .subtitle::before {
+            content: '//';
+            margin-right: 0.5rem;
+            opacity: 0.5;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.75rem, 2vw, 1rem);
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+            z-index: 100;
+            animation: fadeInUp 1.2s 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+            text-transform: lowercase;
+        }
+
+        /* Scanline effect */
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 136, 0.02) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 997;
+            animation: scan 8s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(4px); }
+        }
+
+        /* Decorative diagonal lines */
+        .deco-line {
+            position: fixed;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--accent-glow), transparent);
+            opacity: 0.1;
+            z-index: 1;
+            animation: flicker 5s ease-in-out infinite;
+        }
+
+        .deco-line:nth-child(1) {
+            left: 20%;
+            transform: skewX(-15deg);
+            animation-delay: 0s;
+        }
+
+        .deco-line:nth-child(2) {
+            right: 25%;
+            transform: skewX(15deg);
+            animation-delay: 1s;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 0.05; }
+            50% { opacity: 0.15; }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                transform: skewY(-1deg);
+            }
+            
+            footer {
+                font-size: 0.7rem;
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    <div class="deco-line"></div>
+    <div class="deco-line"></div>
+    
+    <div class="container">
+        <div class="hero">
+            <h1 class="title">
+                <span>OUT OF</span>
+                <span>BOREDOM</span>
+            </h1>
+            <p class="subtitle">ft. Preetam Ahuja</p>
+        </div>
+    </div>
+
+    <footer>
+        intresting shit pooping soon 🤘
+    </footer>
+</body>
+</html>
