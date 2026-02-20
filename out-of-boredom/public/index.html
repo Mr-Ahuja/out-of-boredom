@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Out Of Boredom</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,46 +15,49 @@
             --text-dim: #666;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html {
-            overflow: hidden;
+        html, body {
             height: 100%;
-            width: 100%;
         }
 
         body {
+            /* Mobile-first: no position:fixed on body — kills iOS Safari */
+            min-height: 100dvh;
             background: var(--bg);
             color: var(--accent);
             font-family: 'Red Hat Display', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
-            cursor: crosshair;
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            position: fixed;
         }
 
-        /* Grain texture overlay */
-        body::before {
+        /* Vignette */
+        body::after {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-image: 
-                repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.15) 3px),
-                repeating-linear-gradient(90deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.15) 3px);
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%);
             pointer-events: none;
-            opacity: 0.03;
-            z-index: 999;
-            animation: grain 0.3s steps(6) infinite;
+            z-index: 2;
+        }
+
+        /* Grain — desktop only (too costly on mobile) */
+        @media (min-width: 769px) {
+            body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background-image:
+                    repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.15) 3px),
+                    repeating-linear-gradient(90deg, rgba(0,0,0,0.15) 0px, transparent 1px, transparent 2px, rgba(0,0,0,0.15) 3px);
+                pointer-events: none;
+                opacity: 0.03;
+                z-index: 999;
+                animation: grain 0.3s steps(6) infinite;
+            }
         }
 
         @keyframes grain {
@@ -70,203 +73,34 @@
             90% { transform: translate(1%, -1%); }
         }
 
-        /* Vignette */
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.7) 100%);
-            pointer-events: none;
-            z-index: 998;
-        }
+        /* Deco lines — desktop only */
+        .deco-line { display: none; }
 
-        .slider-wrapper {
-            width: 100%;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            touch-action: pan-x;
-        }
-
-        .slider-container {
-            display: flex;
-            width: 200vw;
-            height: 100%;
-            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-            will-change: transform;
-        }
-
-        .slide {
-            flex: 0 0 100vw;
-            min-width: 100vw;
-            max-width: 100vw;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            padding: 2rem;
-            box-sizing: border-box;
-        }
-
-        .hero {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
+        @media (min-width: 769px) {
+            .deco-line {
+                display: block;
+                position: fixed;
+                width: 2px;
+                height: 100%;
+                background: linear-gradient(to bottom, transparent, var(--accent-glow), transparent);
+                opacity: 0.1;
+                z-index: 1;
+                animation: flicker 5s ease-in-out infinite;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            .deco-line:nth-child(1) { left: 20%;  transform: skewX(-15deg); animation-delay: 0s; }
+            .deco-line:nth-child(2) { right: 25%; transform: skewX(15deg);  animation-delay: 1s; }
         }
 
-        .title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: clamp(3.5rem, 15vw, 12rem);
-            line-height: 0.85;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            position: relative;
-            display: inline-block;
-            transform: skewY(-2deg);
+        @keyframes flicker {
+            0%, 100% { opacity: 0.05; }
+            50%       { opacity: 0.15; }
         }
 
-        .title span {
-            display: block;
-            text-shadow: 
-                0 0 10px var(--accent-glow),
-                0 0 20px var(--accent-glow),
-                0 0 40px var(--accent-glow),
-                0 0 80px rgba(0, 255, 136, 0.4);
-        }
-
-        /* Neon flicker effect */
-        @keyframes neonFlicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                text-shadow: 
-                    0 0 10px var(--accent-glow),
-                    0 0 20px var(--accent-glow),
-                    0 0 40px var(--accent-glow),
-                    0 0 80px rgba(0, 255, 136, 0.4);
-                opacity: 1;
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-                opacity: 0.4;
-            }
-            22% {
-                text-shadow: none;
-                opacity: 0.2;
-            }
-        }
-
-        .title span {
-            animation: neonFlicker 5s infinite;
-        }
-
-        .title span:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .title span:nth-child(2) {
-            animation-delay: 0.3s;
-        }
-
-        .title span:nth-child(3) {
-            animation-delay: 0.5s;
-        }
-
-        .ampersand {
-            font-size: 0.5em;
-            opacity: 0.8;
-            margin: 0.2em 0;
-        }
-
-        .subtitle {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(1rem, 3vw, 2rem);
-            margin-top: 2rem;
-            letter-spacing: 0.15em;
-            color: var(--accent);
-            opacity: 0.7;
-            text-transform: uppercase;
-            animation: fadeInUp 1.2s 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-        }
-
-        .subtitle::before {
-            content: '//';
-            margin-right: 0.5rem;
-            opacity: 0.5;
-        }
-
-        /* Slide indicators */
-        .slide-nav {
-            position: fixed;
-            bottom: 4rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 1rem;
-            z-index: 101;
-        }
-
-        .slide-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--text-dim);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 5px rgba(0, 255, 136, 0.2);
-        }
-
-        .slide-dot.active {
-            background: var(--accent);
-            box-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 2rem;
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: clamp(0.75rem, 2vw, 1rem);
-            color: var(--text-dim);
-            letter-spacing: 0.1em;
-            z-index: 100;
-            animation: fadeInUp 1.2s 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-            text-transform: lowercase;
-        }
-
-        /* Scanline effect */
+        /* Scanline */
         .scanline {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                transparent 50%,
-                rgba(0, 255, 136, 0.02) 50%
-            );
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 255, 136, 0.02) 50%);
             background-size: 100% 4px;
             pointer-events: none;
             z-index: 997;
@@ -274,77 +108,119 @@
         }
 
         @keyframes scan {
-            0% { transform: translateY(0); }
+            0%   { transform: translateY(0); }
             100% { transform: translateY(4px); }
         }
 
-        /* Decorative diagonal lines */
-        .deco-line {
+        /* ── HERO ── */
+        .hero {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            /* padding so content never hides under footer */
+            padding: 1.5rem 1.5rem 5rem;
+            animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── TITLE ── mobile-first */
+        .title {
+            font-family: 'Bebas Neue', sans-serif;
+            /* At 375px: 22vw = 82.5px — fills the screen properly */
+            font-size: clamp(4rem, 22vw, 12rem);
+            line-height: 0.85;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: inline-block;
+            /* No skew on mobile — looks bad at small sizes */
+        }
+
+        /* Desktop: add the skew */
+        @media (min-width: 769px) {
+            .title {
+                font-size: clamp(6rem, 15vw, 12rem);
+                transform: skewY(-2deg);
+            }
+        }
+
+        .title span {
+            display: block;
+            animation: neonFlicker 5s infinite;
+        }
+
+        .title span:nth-child(1) { animation-delay: 0.1s; }
+        .title span:nth-child(2) { animation-delay: 0.3s; }
+
+        @keyframes neonFlicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow:
+                    0 0 10px var(--accent-glow),
+                    0 0 20px var(--accent-glow),
+                    0 0 40px var(--accent-glow),
+                    0 0 80px rgba(0, 255, 136, 0.4);
+                opacity: 1;
+            }
+            20%, 24%, 55% { text-shadow: none; opacity: 0.4; }
+            22%            { text-shadow: none; opacity: 0.2; }
+        }
+
+        /* ── SUBTITLE ── mobile-first */
+        .subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(0.85rem, 4.5vw, 2rem);
+            margin-top: 1.25rem;
+            letter-spacing: 0.12em;
+            opacity: 0.7;
+            text-transform: uppercase;
+            animation: fadeInUp 1.2s 0.3s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+        }
+
+        @media (min-width: 769px) {
+            .subtitle {
+                font-size: clamp(1rem, 3vw, 2rem);
+                margin-top: 2rem;
+                letter-spacing: 0.15em;
+            }
+        }
+
+        .subtitle::before { content: '//'; margin-right: 0.4em; opacity: 0.5; }
+
+        /* ── FOOTER ── mobile-first */
+        footer {
             position: fixed;
-            width: 2px;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent, var(--accent-glow), transparent);
-            opacity: 0.1;
-            z-index: 1;
-            animation: flicker 5s ease-in-out infinite;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            /* Mobile: smaller text, respect iOS home indicator */
+            font-size: clamp(0.7rem, 3.5vw, 0.9rem);
+            color: var(--text-dim);
+            letter-spacing: 0.08em;
+            text-transform: lowercase;
+            z-index: 100;
+            animation: fadeInUp 1.2s 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+            /* iOS safe area (notch / home indicator) */
+            padding: 1rem 1rem max(1rem, env(safe-area-inset-bottom));
         }
 
-        .deco-line:nth-child(1) {
-            left: 20%;
-            transform: skewX(-15deg);
-            animation-delay: 0s;
-        }
-
-        .deco-line:nth-child(2) {
-            right: 25%;
-            transform: skewX(15deg);
-            animation-delay: 1s;
-        }
-
-        @keyframes flicker {
-            0%, 100% { opacity: 0.05; }
-            50% { opacity: 0.15; }
-        }
-
-        @media (max-width: 768px) {
-            .title {
-                transform: skewY(-0.5deg);
-                font-size: clamp(2.5rem, 12vw, 8rem);
-            }
-
-            .subtitle {
-                font-size: clamp(0.8rem, 2.5vw, 1.5rem);
-            }
-            
+        @media (min-width: 769px) {
             footer {
-                font-size: 0.65rem;
-                padding: 1rem;
-                padding-bottom: 6rem;
-            }
-
-            .slide {
-                padding: 1.5rem 1rem;
-            }
-
-            .slide-nav {
-                bottom: 3rem;
+                font-size: clamp(0.75rem, 1.5vw, 1rem);
+                padding: 1.5rem 2rem;
+                letter-spacing: 0.1em;
             }
         }
 
-        @media (max-width: 480px) {
-            .title {
-                transform: skewY(0deg);
-                font-size: clamp(2rem, 10vw, 6rem);
-            }
-
-            .subtitle {
-                font-size: clamp(0.7rem, 2vw, 1.2rem);
-                margin-top: 1rem;
-            }
-
-            .slide {
-                padding: 1rem;
-            }
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .hero, .subtitle, footer { animation: none; opacity: 1; transform: none; }
+            .title span              { animation: none; text-shadow: 0 0 10px var(--accent-glow), 0 0 20px var(--accent-glow); }
+            .scanline                { animation: none; }
         }
     </style>
 </head>
@@ -352,144 +228,15 @@
     <div class="scanline"></div>
     <div class="deco-line"></div>
     <div class="deco-line"></div>
-    
-    <div class="slider-wrapper">
-        <div class="slider-container" id="slider">
-            <!-- Slide 1 -->
-            <div class="slide">
-                <div class="hero">
-                    <h1 class="title">
-                        <span>OUT OF</span>
-                        <span>BOREDOM</span>
-                    </h1>
-                    <p class="subtitle">ft. Preetam Ahuja</p>
-                </div>
-            </div>
 
-            <!-- Slide 2 -->
-            <div class="slide">
-                <div class="hero">
-                    <h1 class="title">
-                        <span>KALOL BHAIYA</span>
-                        <span class="ampersand">&</span>
-                        <span>JWALI DIDI</span>
-                    </h1>
-                    <p class="subtitle">Solving Real Problems</p>
-                </div>
-            </div>
-        </div>
+    <div class="hero">
+        <h1 class="title">
+            <span>OUT OF</span>
+            <span>BOREDOM</span>
+        </h1>
+        <p class="subtitle">ft. Preetam Ahuja</p>
     </div>
 
-    <div class="slide-nav">
-        <div class="slide-dot active" data-slide="0"></div>
-        <div class="slide-dot" data-slide="1"></div>
-    </div>
-
-    <footer>
-        intresting shit pooping soon 🤘
-    </footer>
-
-    <script>
-        const slider = document.getElementById('slider');
-        const dots = document.querySelectorAll('.slide-dot');
-        let currentSlide = 0;
-
-        function goToSlide(index) {
-            currentSlide = Math.max(0, Math.min(1, index));
-            const offset = currentSlide * 100;
-            slider.style.transform = `translateX(-${offset}vw)`;
-            
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === currentSlide);
-            });
-        }
-
-        // Touch events
-        let touchStartX = 0;
-        let touchEndX = 0;
-        let touchStartY = 0;
-        let touchEndY = 0;
-
-        slider.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].clientX;
-            touchStartY = e.changedTouches[0].clientY;
-        }, { passive: true });
-
-        slider.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].clientX;
-            touchEndY = e.changedTouches[0].clientY;
-            handleSwipe();
-        }, { passive: true });
-
-        function handleSwipe() {
-            const swipeThreshold = 30;
-            const diffX = touchStartX - touchEndX;
-            const diffY = Math.abs(touchStartY - touchEndY);
-
-            // Only handle horizontal swipes (ignore vertical scrolls)
-            if (diffY < 50 && Math.abs(diffX) > swipeThreshold) {
-                if (diffX > 0 && currentSlide < 1) {
-                    // Swiped left, go to next slide
-                    goToSlide(currentSlide + 1);
-                } else if (diffX < 0 && currentSlide > 0) {
-                    // Swiped right, go to previous slide
-                    goToSlide(currentSlide - 1);
-                }
-            }
-        }
-
-        // Mouse events for desktop
-        let mouseStartX = 0;
-        let mouseIsDragging = false;
-
-        slider.addEventListener('mousedown', (e) => {
-            mouseStartX = e.clientX;
-            mouseIsDragging = true;
-            e.preventDefault();
-        });
-
-        slider.addEventListener('mousemove', (e) => {
-            if (!mouseIsDragging) return;
-            e.preventDefault();
-        });
-
-        slider.addEventListener('mouseup', (e) => {
-            if (!mouseIsDragging) return;
-            
-            const mouseEndX = e.clientX;
-            const diff = mouseStartX - mouseEndX;
-            
-            if (Math.abs(diff) > 100) {
-                if (diff > 0 && currentSlide < 1) {
-                    goToSlide(currentSlide + 1);
-                } else if (diff < 0 && currentSlide > 0) {
-                    goToSlide(currentSlide - 1);
-                }
-            }
-            
-            mouseIsDragging = false;
-        });
-
-        slider.addEventListener('mouseleave', () => {
-            mouseIsDragging = false;
-        });
-
-        // Dot navigation
-        dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const slideIndex = parseInt(dot.dataset.slide);
-                goToSlide(slideIndex);
-            });
-        });
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' && currentSlide < 1) {
-                goToSlide(currentSlide + 1);
-            } else if (e.key === 'ArrowLeft' && currentSlide > 0) {
-                goToSlide(currentSlide - 1);
-            }
-        });
-    </script>
+    <footer>intresting shit pooping soon 🤘</footer>
 </body>
 </html>
